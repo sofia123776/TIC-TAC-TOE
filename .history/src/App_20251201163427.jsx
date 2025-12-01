@@ -81,8 +81,7 @@ export default function Game(){
     X: "/avatars/braidedwoman.jpg",
     O: "/avatars/manwithglasses.jpg"
   });
-
-  // ACTIVE TAB SELECTION
+// ACTIVE TAB SELECTION
   const [activeStatsTab, setActiveStatsTab] = useState("X");
 
   // 🟦 PLAYER STATISTICS STATE
@@ -415,32 +414,22 @@ export default function Game(){
             </div>
           </div>
 
-          {/* Player Statistics - FIXED SECTION */}
+          {/* Player Statistics */}
           <div className="control-section stats-section">
             <h3 className="section-title">📊 Player Statistics</h3>
-            
-            {/* Tab Selection */}
             <div className="player-tabs">
-              <div 
-                className={`player-tab ${activeStatsTab === "X" ? "active" : ""}`}
-                onClick={() => setActiveStatsTab("X")}
-                data-player="X"
-              >
+        <div className="player-tab active" data-player="X">
                 <img src={avatars.X} alt="Player X" className="tab-avatar" />
                 <span>Player X</span>
               </div>
-              <div 
-                className={`player-tab ${activeStatsTab === "O" ? "active" : ""}`}
-                onClick={() => setActiveStatsTab("O")}
-                data-player="O"
-              >
+              <div className="player-tab active" data-player="O">
                 <img src={avatars.O} alt="Player O" className="tab-avatar" />
                 <span>Player O</span>
               </div>
             </div>
             
             {/* X Player Stats */}
-            <div className={`player-stats ${activeStatsTab === "X" ? "active" : ""}`} id="stats-X">
+            <div className="player-stats active" id="stats-X">
               <div className="stats-grid">
                 <div className="stat-box">
                   <div className="stat-icon">🎯</div>
@@ -488,8 +477,8 @@ export default function Game(){
               </div>
             </div>
             
-            {/* O Player Stats */}
-            <div className={`player-stats ${activeStatsTab === "O" ? "active" : ""}`} id="stats-O">
+            {/* O Player Stats (hidden by default) */}
+            <div className="player-stats" id="stats-O">
               <div className="stats-grid">
                 <div className="stat-box">
                   <div className="stat-icon">🎯</div>

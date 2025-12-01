@@ -1,0 +1,134 @@
+/* Full background */
+body {
+  background: #080e1c;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  color: #e8faff;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 40px;
+}
+
+/* Game Title */
+h1 {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 1000;
+  margin-bottom: 25px;
+  text-shadow: 0 0 18px #00eaff;
+  color: #00eaff;
+}
+
+/* Outer game container */
+.game {
+  display: flex;
+  gap: 40px;
+  padding: 25px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.04);
+  box-shadow: 0 0 35px rgba(0, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+}
+
+/* Board container */
+.game-board {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Status text */
+.status {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: #39ffd3;
+  text-shadow: 0 0 8px #39ffd3;
+}
+
+/* Board row layout */
+.board-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* Square button */
+.square {
+  width: 110px !important;
+  height: 110px !important;
+  font-size: 42px !important;
+  font-weight: bold;
+  color: #00eaff;
+  background: rgba(0, 0, 0, 0.45);
+  border: 2px solid rgba(0, 255, 255, 0.2);
+  border-radius: 18px;
+  cursor: pointer;
+  transition: 0.25s ease-in-out, transform 0.15s;
+  text-shadow: 0 0 12px #00eaff;
+}
+
+.square:hover {
+  transform: scale(1.07);
+  background: rgba(0, 255, 255, 0.15);
+  box-shadow: 0 0 18px #00eaff;
+}
+
+/* X and O color override */
+.square:contains("X"), .square.X {
+  color: #ff3c89;
+  text-shadow: 0 0 12px #ff3c89;
+}
+
+.square:contains("O"), .square.O {
+  color: #3cfffb;
+  text-shadow: 0 0 12px #3cfffb;
+}
+
+/* Moves list */
+.game-info ol {
+  list-style: none;
+  padding: 0;
+}
+
+.game-info button {
+  padding: 10px 20px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  border: none;
+  cursor: pointer;
+  background: rgba(0, 255, 255, 0.15);
+  color: #e8ffff;
+  font-size: 14px;
+  text-shadow: 0 0 6px #39ffd3;
+  transition: 0.2s ease;
+}
+
+.game-info button:hover {
+  background: #39ffd3;
+  color: #001010;
+  box-shadow: 0 0 18px #39ffd3;
+  transform: scale(1.05);
+}
+
+.highlight {
+  animation: winPulse 1s infinite ease-in-out;
+  background: rgba(0, 255, 150, 0.25) !important;
+  box-shadow: 0 0 25px #00ffb3;
+  border: 2px solid #00ff9d !important;
+}
+
+@keyframes winPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 12px #00ffb3;
+  }
+  50% {
+    transform: scale(1.12);
+    box-shadow: 0 0 25px #00ffb3;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 12px #00ffb3;
+  }
+}
+

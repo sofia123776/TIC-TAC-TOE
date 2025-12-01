@@ -47,20 +47,24 @@ function Board({xIsNext, squares, onPlay, avatars}) {
   }
   
   return (
-    <div className="board-container">
+    <>
       <div className={`status ${winner ? "winner" : ""}`}>{status}</div>
-      <div className='board-grid'>
+      <div className='board-row'>
         <Square value={squares[0]} onSquareClick={() =>Handleclick(0)} highlight={winningLine?.includes(0)} avatars={avatars}/>
         <Square value={squares[1]} onSquareClick={() =>Handleclick(1)} highlight={winningLine?.includes(1)} avatars={avatars}/>
         <Square value={squares[2]} onSquareClick={() =>Handleclick(2)} highlight={winningLine?.includes(2)} avatars={avatars}/>
+      </div>
+      <div className='board-row'>
         <Square value={squares[3]} onSquareClick={() =>Handleclick(3)} highlight={winningLine?.includes(3)} avatars={avatars}/>
         <Square value={squares[4]} onSquareClick={() =>Handleclick(4)} highlight={winningLine?.includes(4)} avatars={avatars}/>
         <Square value={squares[5]} onSquareClick={() =>Handleclick(5)} highlight={winningLine?.includes(5)} avatars={avatars}/>
+      </div>
+      <div className='board-row'>
         <Square value={squares[6]} onSquareClick={() =>Handleclick(6)} highlight={winningLine?.includes(6)} avatars={avatars}/>
         <Square value={squares[7]} onSquareClick={() =>Handleclick(7)} highlight={winningLine?.includes(7)} avatars={avatars}/>
         <Square value={squares[8]} onSquareClick={() =>Handleclick(8)} highlight={winningLine?.includes(8)} avatars={avatars}/>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -81,9 +85,6 @@ export default function Game(){
     X: "/avatars/braidedwoman.jpg",
     O: "/avatars/manwithglasses.jpg"
   });
-
-  // ACTIVE TAB SELECTION
-  const [activeStatsTab, setActiveStatsTab] = useState("X");
 
   // 🟦 PLAYER STATISTICS STATE
   const [playerStats, setPlayerStats] = useState({
@@ -312,235 +313,154 @@ export default function Game(){
   });
 
   return (
-    <div className="game-container">
-      <header className="game-header">
-        <h1 className="game-title">🎮 Tic Tac Toe Champions</h1>
-        <div className="header-subtitle">Classic Game with Modern Twist</div>
-      </header>
+    <div className="game">
+      <h1>TIC TAC TOE GAME</h1>
+      
+      {/* 🟦 TIMER DISPLAY */}
+      <div className="timer-container">
+        <div className={`timer ${timeLeft <= 10 ? 'warning' : ''}`}>
+          ⏱️ Time Left: <span>{timeLeft}s</span>
+        </div>
+        <button 
+          className="timer-toggle"
+          onClick={() => setIsTimerActive(!isTimerActive)}
+        >
+          {isTimerActive ? "⏸️ Pause Timer" : "▶️ Resume Timer"}
+        </button>
+      </div>
 
-      <div className="game-content">
-        {/* LEFT SIDEBAR - Game Controls & Info */}
-        <div className="sidebar left-sidebar">
-          {/* Timer Section */}
-          <div className="control-section timer-section">
-            <h3 className="section-title">⏱️ Game Timer</h3>
-            <div className="timer-display">
-              <div className={`timer-circle ${timeLeft <= 10 ? 'warning' : ''}`}>
-                <span className="timer-value">{timeLeft}s</span>
-                <div className="timer-progress" style={{ width: `${(timeLeft/30)*100}%` }}></div>
-              </div>
-              <button 
-                className="timer-btn"
-                onClick={() => setIsTimerActive(!isTimerActive)}
-              >
-                {isTimerActive ? "⏸️ Pause" : "▶️ Resume"}
-              </button>
-            </div>
+      {/* 🟦 AVATAR SELECTION */}
+      <div className="avatar-selection">
+        <AvatarSelector 
+          player="X" 
+          currentAvatar={avatars.X}
+          onAvatarChange={(avatar) => setAvatars(prev => ({...prev, X: avatar}))}
+        />
+        <AvatarSelector 
+          player="O" 
+          currentAvatar={avatars.O}
+          onAvatarChange={(avatar) => setAvatars(prev => ({...prev, O: avatar}))}
+        />
+      </div>
+
+      {/* 🟦 SCOREBOARD */}
+      <div className="scoreboard">
+        <h2>🏆 Scoreboard</h2>
+        <div className="score-cards">
+          <div className="score-card player-x">
+            <h3>Player X</h3>
+            <p className="score-value">{score.X}</p>
+            <p className="score-label">Wins</p>
           </div>
-
-          {/* Avatar Selection */}
-          <div className="control-section avatar-section">
-            <h3 className="section-title">👤 Player Avatars</h3>
-            <div className="avatar-selection-grid">
-              <AvatarSelector 
-                player="X" 
-                currentAvatar={avatars.X}
-                onAvatarChange={(avatar) => setAvatars(prev => ({...prev, X: avatar}))}
-              />
-              <AvatarSelector 
-                player="O" 
-                currentAvatar={avatars.O}
-                onAvatarChange={(avatar) => setAvatars(prev => ({...prev, O: avatar}))}
-              />
-            </div>
+          <div className="score-card draws">
+            <h3>Draws</h3>
+            <p className="score-value">{score.Draws}</p>
           </div>
-
-          {/* Game History */}
-          <div className="control-section history-section">
-            <h3 className="section-title">📜 Game History</h3>
-            <div className="history-list">
-              <ol>{moves}</ol>
-            </div>
+          <div className="score-card player-o">
+            <h3>Player O</h3>
+            <p className="score-value">{score.O}</p>
+            <p className="score-label">Wins</p>
           </div>
         </div>
+      </div>
 
-        {/* MAIN GAME BOARD */}
-        <div className="main-game-area">
-          <div className="game-board-wrapper">
-            <div className={`game-board ${Calculatewinner(currentSquares) ? "winner" : ""}`}>
-              <Board 
-                xIsNext={xIsNext}
-                squares={currentSquares}
-                onPlay={handlePlay}
-                avatars={avatars}
-              />
+      {/* 🟦 PLAYER STATISTICS DASHBOARD */}
+      <div className="stats-dashboard">
+        <h2>📊 Player Statistics</h2>
+        <div className="stats-grid">
+          <div className="player-stats-card player-x-card">
+            <div className="player-header">
+              <img src={avatars.X} alt="Player X" className="player-avatar" />
+              <h3>Player X</h3>
             </div>
-          </div>
-        </div>
-
-        {/* RIGHT SIDEBAR - Stats & Score */}
-        <div className="sidebar right-sidebar">
-          {/* Scoreboard */}
-          <div className="control-section scoreboard-section">
-            <h3 className="section-title">🏆 Live Scoreboard</h3>
-            <div className="scoreboard-cards">
-              <div className="score-card player-x-score">
-                <div className="score-avatar">
-                  <img src={avatars.X} alt="Player X" />
-                </div>
-                <div className="score-info">
-                  <h4>Player X</h4>
-                  <div className="score-value">{score.X}</div>
-                  <div className="score-label">Wins</div>
-                </div>
+            <div className="stats-list">
+              <div className="stat-item">
+                <span className="stat-label">Total Games:</span>
+                <span className="stat-value">{playerStats.X.totalGames}</span>
               </div>
-              
-              <div className="score-card draws-score">
-                <div className="score-info">
-                  <h4>Draws</h4>
-                  <div className="score-value">{score.Draws}</div>
-                </div>
+              <div className="stat-item">
+                <span className="stat-label">Wins:</span>
+                <span className="stat-value win">{playerStats.X.wins}</span>
               </div>
-              
-              <div className="score-card player-o-score">
-                <div className="score-avatar">
-                  <img src={avatars.O} alt="Player O" />
-                </div>
-                <div className="score-info">
-                  <h4>Player O</h4>
-                  <div className="score-value">{score.O}</div>
-                  <div className="score-label">Wins</div>
-                </div>
+              <div className="stat-item">
+                <span className="stat-label">Losses:</span>
+                <span className="stat-value loss">{playerStats.X.losses}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Draws:</span>
+                <span className="stat-value">{playerStats.X.draws}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Win Rate:</span>
+                <span className="stat-value highlight">{playerStats.X.winRate}%</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Current Streak:</span>
+                <span className="stat-value streak">
+                  {playerStats.X.currentStreak > 0 ? `${playerStats.X.currentStreak} 🔥` : playerStats.X.currentStreak}
+                </span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Longest Streak:</span>
+                <span className="stat-value">{playerStats.X.longestWinStreak}</span>
               </div>
             </div>
           </div>
 
-          {/* Player Statistics - FIXED SECTION */}
-          <div className="control-section stats-section">
-            <h3 className="section-title">📊 Player Statistics</h3>
-            
-            {/* Tab Selection */}
-            <div className="player-tabs">
-              <div 
-                className={`player-tab ${activeStatsTab === "X" ? "active" : ""}`}
-                onClick={() => setActiveStatsTab("X")}
-                data-player="X"
-              >
-                <img src={avatars.X} alt="Player X" className="tab-avatar" />
-                <span>Player X</span>
-              </div>
-              <div 
-                className={`player-tab ${activeStatsTab === "O" ? "active" : ""}`}
-                onClick={() => setActiveStatsTab("O")}
-                data-player="O"
-              >
-                <img src={avatars.O} alt="Player O" className="tab-avatar" />
-                <span>Player O</span>
-              </div>
+          <div className="player-stats-card player-o-card">
+            <div className="player-header">
+              <img src={avatars.O} alt="Player O" className="player-avatar" />
+              <h3>Player O</h3>
             </div>
-            
-            {/* X Player Stats */}
-            <div className={`player-stats ${activeStatsTab === "X" ? "active" : ""}`} id="stats-X">
-              <div className="stats-grid">
-                <div className="stat-box">
-                  <div className="stat-icon">🎯</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{playerStats.X.winRate}%</div>
-                    <div className="stat-label">Win Rate</div>
-                  </div>
-                </div>
-                <div className="stat-box">
-                  <div className="stat-icon">🔥</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{playerStats.X.currentStreak}</div>
-                    <div className="stat-label">Current Streak</div>
-                  </div>
-                </div>
-                <div className="stat-box">
-                  <div className="stat-icon">📈</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{playerStats.X.longestWinStreak}</div>
-                    <div className="stat-label">Best Streak</div>
-                  </div>
-                </div>
-                <div className="stat-box">
-                  <div className="stat-icon">📊</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{playerStats.X.totalGames}</div>
-                    <div className="stat-label">Games Played</div>
-                  </div>
-                </div>
+            <div className="stats-list">
+              <div className="stat-item">
+                <span className="stat-label">Total Games:</span>
+                <span className="stat-value">{playerStats.O.totalGames}</span>
               </div>
-              
-              <div className="detailed-stats">
-                <div className="detailed-stat">
-                  <span>Wins</span>
-                  <span className="stat-number win">{playerStats.X.wins}</span>
-                </div>
-                <div className="detailed-stat">
-                  <span>Losses</span>
-                  <span className="stat-number loss">{playerStats.X.losses}</span>
-                </div>
-                <div className="detailed-stat">
-                  <span>Draws</span>
-                  <span className="stat-number">{playerStats.X.draws}</span>
-                </div>
+              <div className="stat-item">
+                <span className="stat-label">Wins:</span>
+                <span className="stat-value win">{playerStats.O.wins}</span>
               </div>
-            </div>
-            
-            {/* O Player Stats */}
-            <div className={`player-stats ${activeStatsTab === "O" ? "active" : ""}`} id="stats-O">
-              <div className="stats-grid">
-                <div className="stat-box">
-                  <div className="stat-icon">🎯</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{playerStats.O.winRate}%</div>
-                    <div className="stat-label">Win Rate</div>
-                  </div>
-                </div>
-                <div className="stat-box">
-                  <div className="stat-icon">🔥</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{playerStats.O.currentStreak}</div>
-                    <div className="stat-label">Current Streak</div>
-                  </div>
-                </div>
-                <div className="stat-box">
-                  <div className="stat-icon">📈</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{playerStats.O.longestWinStreak}</div>
-                    <div className="stat-label">Best Streak</div>
-                  </div>
-                </div>
-                <div className="stat-box">
-                  <div className="stat-icon">📊</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{playerStats.O.totalGames}</div>
-                    <div className="stat-label">Games Played</div>
-                  </div>
-                </div>
+              <div className="stat-item">
+                <span className="stat-label">Losses:</span>
+                <span className="stat-value loss">{playerStats.O.losses}</span>
               </div>
-              
-              <div className="detailed-stats">
-                <div className="detailed-stat">
-                  <span>Wins</span>
-                  <span className="stat-number win">{playerStats.O.wins}</span>
-                </div>
-                <div className="detailed-stat">
-                  <span>Losses</span>
-                  <span className="stat-number loss">{playerStats.O.losses}</span>
-                </div>
-                <div className="detailed-stat">
-                  <span>Draws</span>
-                  <span className="stat-number">{playerStats.O.draws}</span>
-                </div>
+              <div className="stat-item">
+                <span className="stat-label">Draws:</span>
+                <span className="stat-value">{playerStats.O.draws}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Win Rate:</span>
+                <span className="stat-value highlight">{playerStats.O.winRate}%</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Current Streak:</span>
+                <span className="stat-value streak">
+                  {playerStats.O.currentStreak > 0 ? `${playerStats.O.currentStreak} 🔥` : playerStats.O.currentStreak}
+                </span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Longest Streak:</span>
+                <span className="stat-value">{playerStats.O.longestWinStreak}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Game Over Popup */}
+      <div className={`game-board ${Calculatewinner(currentSquares) ? "winner" : ""}`}>
+        <Board 
+          xIsNext={xIsNext}
+          squares={currentSquares}
+          onPlay={handlePlay}
+          avatars={avatars}
+        />
+      </div>
+
+      <div className="game-info">
+        <ol>{moves}</ol>
+      </div>
+      
       <GameOverPopup 
         winner={winnerPopup}
         onRestart={handleRestart}
@@ -555,10 +475,8 @@ function GameOverPopup({ winner, onRestart }) {
   return (
     <div className="game-over-overlay">
       <div className="game-over-box">
-        <div className="celebration">🎉</div>
         <h2>{winner === "Draw" ? "It's a Draw!" : `${winner} Wins!`}</h2>
-        <p className="popup-message">Great game! Ready for another round?</p>
-        <button className="restart-btn" onClick={onRestart}>🎮 Play Again</button>
+        <button onClick={onRestart}>Play Again</button>
       </div>
     </div>
   );
@@ -594,16 +512,13 @@ function AvatarSelector({ player, currentAvatar, onAvatarChange }) {
   ];
 
   return (
-    <div className="avatar-selector-compact">
-      <div className="player-label">Player {player}</div>
-      <div className="current-avatar">
-        <img src={currentAvatar} alt={`Current ${player}`} />
-      </div>
-      <div className="avatar-options-compact">
+    <div className="avatar-selector">
+      <label>Player {player} Avatar:</label>
+      <div className="avatar-options">
         {presetAvatars.map((avatar, index) => (
           <div
             key={index}
-            className={`avatar-option-compact ${currentAvatar === avatar ? 'selected' : ''}`}
+            className={`avatar-option ${currentAvatar === avatar ? 'selected' : ''}`}
             onClick={() => onAvatarChange(avatar)}
           >
             <img src={avatar} alt={`Avatar ${index + 1}`} />
