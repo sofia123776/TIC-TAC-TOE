@@ -1,0 +1,21 @@
+{
+  "short_name": "TicTacToe",
+  "name": "Tic Tac Toe Champions",
+  "description": "Classic Tic Tac Toe with AI opponents and modern themes",
+  "icons": [
+    {
+      "src": "/logo192.jpg",
+      "type": "image/jpeg",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/logo512.jpg",
+      "type": "image/jpeg",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#16213e",
+  "background_color": "#16213e"
+}

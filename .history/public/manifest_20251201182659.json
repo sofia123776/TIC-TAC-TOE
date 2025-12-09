@@ -1,0 +1,42 @@
+{
+  "short_name": "TicTacToe",
+  "name": "Tic Tac Toe Champions",
+  "description": "Classic Tic Tac Toe with AI opponents and modern themes",
+  "icons": [
+    {
+      "src": "/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "background_color": "#16213e",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#16213e",
+  "orientation": "portrait-primary",
+  "categories": ["games", "entertainment", "strategy"],
+  "shortcuts": [
+    {
+      "name": "New Game",
+      "short_name": "Play",
+      "description": "Start a new game",
+      "url": "/?new-game",
+      "icons": [{ "src": "/logo192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "AI Mode",
+      "short_name": "vs AI",
+      "description": "Play against AI",
+      "url": "/?mode=ai",
+      "icons": [{ "src": "/logo192.png", "sizes": "192x192" }]
+    }
+  ]
+}

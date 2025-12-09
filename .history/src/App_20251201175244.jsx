@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 
+// Keep your existing Square component unchanged
 function Square({value, onSquareClick, highlight, avatars, theme}){
   return(
    <button
@@ -18,9 +19,10 @@ function Square({value, onSquareClick, highlight, avatars, theme}){
   );
 }
 
+// Keep your existing Board component unchanged
 function Board({xIsNext, squares, onPlay, avatars, theme}) {
   function Handleclick(i){
-    if (CalculateWinner(squares) || squares[i]) {
+    if ( Calculatewinner(squares) || squares[i]) {
       return;
     }
     ClickSound.play();
@@ -33,8 +35,8 @@ function Board({xIsNext, squares, onPlay, avatars, theme}) {
     onPlay(nextSquares);
   }
   
-  const winner = CalculateWinner(squares);
-  const winningLine = CalculateWinner(squares, true);
+  const winner = Calculatewinner(squares);
+  const winningLine = Calculatewinner(squares, true);
   const ClickSound = new Audio("/sounds/click.mp3.wav");
   const WinSound = new Audio("/sounds/win.mp3.wav");
   
@@ -46,37 +48,19 @@ function Board({xIsNext, squares, onPlay, avatars, theme}) {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
   
-  // Create 5x5 board (25 squares)
-  const boardSize = 5;
-  const boardRows = [];
-  
-  for (let row = 0; row < boardSize; row++) {
-    const rowSquares = [];
-    for (let col = 0; col < boardSize; col++) {
-      const index = row * boardSize + col;
-      rowSquares.push(
-        <Square 
-          key={index}
-          value={squares[index]} 
-          onSquareClick={() => Handleclick(index)} 
-          highlight={winningLine?.includes(index)} 
-          avatars={avatars} 
-          theme={theme}
-        />
-      );
-    }
-    boardRows.push(
-      <div key={row} className="board-row">
-        {rowSquares}
-      </div>
-    );
-  }
-  
   return (
     <div className="board-container">
       <div className={`status ${winner ? "winner" : ""} ${theme}`}>{status}</div>
       <div className={`board-grid ${theme}`}>
-        {boardRows}
+        <Square value={squares[0]} onSquareClick={() =>Handleclick(0)} highlight={winningLine?.includes(0)} avatars={avatars} theme={theme}/>
+        <Square value={squares[1]} onSquareClick={() =>Handleclick(1)} highlight={winningLine?.includes(1)} avatars={avatars} theme={theme}/>
+        <Square value={squares[2]} onSquareClick={() =>Handleclick(2)} highlight={winningLine?.includes(2)} avatars={avatars} theme={theme}/>
+        <Square value={squares[3]} onSquareClick={() =>Handleclick(3)} highlight={winningLine?.includes(3)} avatars={avatars} theme={theme}/>
+        <Square value={squares[4]} onSquareClick={() =>Handleclick(4)} highlight={winningLine?.includes(4)} avatars={avatars} theme={theme}/>
+        <Square value={squares[5]} onSquareClick={() =>Handleclick(5)} highlight={winningLine?.includes(5)} avatars={avatars} theme={theme}/>
+        <Square value={squares[6]} onSquareClick={() =>Handleclick(6)} highlight={winningLine?.includes(6)} avatars={avatars} theme={theme}/>
+        <Square value={squares[7]} onSquareClick={() =>Handleclick(7)} highlight={winningLine?.includes(7)} avatars={avatars} theme={theme}/>
+        <Square value={squares[8]} onSquareClick={() =>Handleclick(8)} highlight={winningLine?.includes(8)} avatars={avatars} theme={theme}/>
       </div>
     </div>
   );
@@ -92,69 +76,76 @@ const AIHelper = {
     
     if (emptySquares.length === 0) return null;
     
-    // A small delay to make it feel more natural
+    // Add a small delay to make it feel more natural
     return emptySquares[Math.floor(Math.random() * emptySquares.length)];
   },
   
-  // Medium AI - Strategy with some intelligence for 5x5
+  // Medium AI - Strategy with some intelligence
   medium: (squares, player) => {
     const opponent = player === 'X' ? 'O' : 'X';
     
-    // 1. Check for winning move (4 in a row for 5x5)
-    for (let i = 0; i < 25; i++) {
+    // 1. Check for winning move
+    for (let i = 0; i < 9; i++) {
       if (squares[i] === null) {
         const testBoard = [...squares];
         testBoard[i] = player;
-        if (CalculateWinner(testBoard) === player) {
+        if (Calculatewinner(testBoard) === player) {
           return i;
         }
       }
     }
     
     // 2. Block opponent's winning move
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 9; i++) {
       if (squares[i] === null) {
         const testBoard = [...squares];
         testBoard[i] = opponent;
-        if (CalculateWinner(testBoard) === opponent) {
+        if (Calculatewinner(testBoard) === opponent) {
           return i;
         }
       }
     }
     
-    // 3. Take center if available (index 12 in 5x5)
-    if (squares[12] === null) {
-      return 12;
+    // 3. Take center if available
+    if (squares[4] === null) {
+      return 4;
     }
     
-    // 4. Take corners for 5x5
-    const corners = [0, 4, 20, 24];
+    // 4. Take corners
+    const corners = [0, 2, 6, 8];
     const availableCorners = corners.filter(i => squares[i] === null);
     if (availableCorners.length > 0) {
       return availableCorners[Math.floor(Math.random() * availableCorners.length)];
     }
     
-    // 5. Fallback: random move
+    // 5. Take edges
+    const edges = [1, 3, 5, 7];
+    const availableEdges = edges.filter(i => squares[i] === null);
+    if (availableEdges.length > 0) {
+      return availableEdges[Math.floor(Math.random() * availableEdges.length)];
+    }
+    
+    // Fallback: random move
     return AIHelper.easy(squares);
   },
   
-  // Hard AI - Minimax algorithm for 5x5 (with depth limiting)
+  // Hard AI - Minimax algorithm (unbeatable)
   hard: (squares, player) => {
     const opponent = player === 'X' ? 'O' : 'X';
     
-    const minimax = (board, depth, isMaximizing, maxDepth = 3) => {
-      const winner = CalculateWinner(board);
+    const minimax = (board, depth, isMaximizing) => {
+      const winner = Calculatewinner(board);
       
       if (winner === player) return 10 - depth;
       if (winner === opponent) return depth - 10;
-      if (depth === maxDepth || !board.includes(null)) return 0;
+      if (!board.includes(null)) return 0;
       
       if (isMaximizing) {
         let bestScore = -Infinity;
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 9; i++) {
           if (board[i] === null) {
             board[i] = player;
-            let score = minimax(board, depth + 1, false, maxDepth);
+            let score = minimax(board, depth + 1, false);
             board[i] = null;
             bestScore = Math.max(score, bestScore);
           }
@@ -162,10 +153,10 @@ const AIHelper = {
         return bestScore;
       } else {
         let bestScore = Infinity;
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 9; i++) {
           if (board[i] === null) {
             board[i] = opponent;
-            let score = minimax(board, depth + 1, true, maxDepth);
+            let score = minimax(board, depth + 1, true);
             board[i] = null;
             bestScore = Math.min(score, bestScore);
           }
@@ -177,7 +168,7 @@ const AIHelper = {
     let bestScore = -Infinity;
     let bestMove = null;
     
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 9; i++) {
       if (squares[i] === null) {
         squares[i] = player;
         let score = minimax(squares, 0, false);
@@ -193,98 +184,16 @@ const AIHelper = {
   }
 };
 
-// CalculateWinner for 5x5 board (4 in a row wins)
-function CalculateWinner(squares, returnLine = false){
-  const boardSize = 5;
-  const winLength = 4;
-  
-  // Check horizontal
-  for (let row = 0; row < boardSize; row++) {
-    for (let col = 0; col <= boardSize - winLength; col++) {
-      const line = [];
-      for (let k = 0; k < winLength; k++) {
-        line.push(row * boardSize + col + k);
-      }
-      const [a, b, c, d] = line;
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c] && squares[a] === squares[d]) {
-        return returnLine ? line : squares[a];
-      }
-    }
-  }
-  
-  // Check vertical
-  for (let col = 0; col < boardSize; col++) {
-    for (let row = 0; row <= boardSize - winLength; row++) {
-      const line = [];
-      for (let k = 0; k < winLength; k++) {
-        line.push((row + k) * boardSize + col);
-      }
-      const [a, b, c, d] = line;
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c] && squares[a] === squares[d]) {
-        return returnLine ? line : squares[a];
-      }
-    }
-  }
-  
-  // Check diagonal (top-left to bottom-right)
-  for (let row = 0; row <= boardSize - winLength; row++) {
-    for (let col = 0; col <= boardSize - winLength; col++) {
-      const line = [];
-      for (let k = 0; k < winLength; k++) {
-        line.push((row + k) * boardSize + (col + k));
-      }
-      const [a, b, c, d] = line;
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c] && squares[a] === squares[d]) {
-        return returnLine ? line : squares[a];
-      }
-    }
-  }
-  
-  // Check diagonal (top-right to bottom-left)
-  for (let row = 0; row <= boardSize - winLength; row++) {
-    for (let col = winLength - 1; col < boardSize; col++) {
-      const line = [];
-      for (let k = 0; k < winLength; k++) {
-        line.push((row + k) * boardSize + (col - k));
-      }
-      const [a, b, c, d] = line;
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c] && squares[a] === squares[d]) {
-        return returnLine ? line : squares[a];
-      }
-    }
-  }
-  
-  return returnLine ? null : null;
-}
-
-// Sidebar Panel Component
-function SidebarPanel({ title, icon, children, isOpen, onToggle, theme }) {
-  return (
-    <div className={`sidebar-panel ${theme} ${isOpen ? 'open' : 'closed'}`}>
-      <div className="panel-header" onClick={onToggle}>
-        <span className="panel-icon">{icon}</span>
-        <span className="panel-title">{title}</span>
-        <span className="panel-toggle">{isOpen ? '▲' : '▼'}</span>
-      </div>
-      {isOpen && (
-        <div className="panel-content">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-}
-
 export default function Game(){
-  const [history, setHistory] = useState([Array(25).fill(null)]);
+  const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
-  // GAME MODE STATE
-  const [gameMode, setGameMode] = useState('pvp');
-  const [aiDifficulty, setAiDifficulty] = useState('medium');
-  const [aiPlayer, setAiPlayer] = useState('O');
+  // 🆕 GAME MODE STATE
+  const [gameMode, setGameMode] = useState('pvp'); // 'pvp', 'ai'
+  const [aiDifficulty, setAiDifficulty] = useState('medium'); // 'easy', 'medium', 'hard'
+  const [aiPlayer, setAiPlayer] = useState('O'); // Which player is AI? 'X' or 'O'
   const [isAiThinking, setIsAiThinking] = useState(false);
   
   const [score, setScore] = useState({
@@ -299,30 +208,13 @@ export default function Game(){
     O: "/avatars/manwithglasses.jpg"
   });
 
-  // SIDEBAR PANELS STATE
-  const [openPanels, setOpenPanels] = useState({
-    gameMode: false,
-    theme: false,
-    avatars: false,
-    history: false,
-    scoreboard: false,
-    stats: false
-  });
-
-  const togglePanel = (panel) => {
-    setOpenPanels(prev => ({
-      ...prev,
-      [panel]: !prev[panel]
-    }));
-  };
-
-  // ACTIVE STATS TAB
+  // ACTIVE TAB SELECTION
   const [activeStatsTab, setActiveStatsTab] = useState("X");
 
-  // THEME STATE
+  // 🎨 THEME STATE
   const [theme, setTheme] = useState("cyberpunk");
 
-  // PLAYER STATISTICS STATE
+  // 🟦 PLAYER STATISTICS STATE
   const [playerStats, setPlayerStats] = useState({
     X: { 
       wins: 0, 
@@ -348,29 +240,33 @@ export default function Game(){
     }
   });
 
-  // TIMER STATE
+  // 🟦 TIMER STATE
   const [timeLeft, setTimeLeft] = useState(30);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const timerRef = useRef(null);
   const [totalGameTime, setTotalGameTime] = useState(0);
   const [moveStartTime, setMoveStartTime] = useState(Date.now());
 
-  // AI TURN HANDLER
+  // 🆕 AI TURN HANDLER
   useEffect(() => {
+    // Check if it's AI's turn
     if (gameMode === 'ai' && !xIsNext && aiPlayer === 'O' || 
         gameMode === 'ai' && xIsNext && aiPlayer === 'X') {
       
       const currentPlayer = xIsNext ? 'X' : 'O';
       
-      if (!CalculateWinner(currentSquares) && currentSquares.includes(null) && currentPlayer === aiPlayer) {
+      // Only make AI move if game is not over and it's actually AI's turn
+      if (!Calculatewinner(currentSquares) && currentSquares.includes(null) && currentPlayer === aiPlayer) {
         setIsAiThinking(true);
         
+        // Add a small delay to make it feel more natural
         const aiDelay = aiDifficulty === 'easy' ? 500 : 
                        aiDifficulty === 'medium' ? 700 : 1000;
         
         const aiTimer = setTimeout(() => {
           let aiMoveIndex;
           
+          // Get AI move based on difficulty
           switch(aiDifficulty) {
             case 'easy':
               aiMoveIndex = AIHelper.easy(currentSquares);
@@ -385,10 +281,12 @@ export default function Game(){
               aiMoveIndex = AIHelper.medium(currentSquares, aiPlayer);
           }
           
+          // Make the AI move
           if (aiMoveIndex !== null && aiMoveIndex !== undefined) {
             const nextSquares = currentSquares.slice();
             nextSquares[aiMoveIndex] = aiPlayer;
             
+            // Play click sound for AI move
             const ClickSound = new Audio("/sounds/click.mp3.wav");
             ClickSound.play();
             
@@ -405,24 +303,26 @@ export default function Game(){
     }
   }, [xIsNext, currentSquares, gameMode, aiPlayer, aiDifficulty]);
 
-  // TRACK MOVE TIMES
+  // 🟦 TRACK MOVE TIMES
   useEffect(() => {
     if (!winnerPopup && currentSquares.includes(null)) {
       setMoveStartTime(Date.now());
     }
   }, [currentMove, winnerPopup, currentSquares]);
 
-  // UPDATE PLAYER STATISTICS
+  // 🟦 UPDATE PLAYER STATISTICS WHEN GAME ENDS
   useEffect(() => {
     if (winnerPopup) {
       const winner = winnerPopup;
       const loser = winnerPopup === "X" ? "O" : "X";
+      const moveTime = Date.now() - moveStartTime;
       
       setPlayerStats(prev => {
         const newXStats = { ...prev.X };
         const newOStats = { ...prev.O };
         
         if (winner === "X") {
+          // X wins, O loses
           newXStats.wins += 1;
           newXStats.totalGames += 1;
           newXStats.currentStreak += 1;
@@ -435,6 +335,7 @@ export default function Game(){
           newOStats.currentStreak = 0;
           newOStats.winRate = ((newOStats.wins / newOStats.totalGames) * 100).toFixed(1);
         } else {
+          // O wins, X loses
           newOStats.wins += 1;
           newOStats.totalGames += 1;
           newOStats.currentStreak += 1;
@@ -454,6 +355,9 @@ export default function Game(){
         };
       });
     } else if (winnerPopup === null && !currentSquares.includes(null)) {
+      // Draw game
+      const moveTime = Date.now() - moveStartTime;
+      
       setPlayerStats(prev => {
         const newXStats = { ...prev.X };
         const newOStats = { ...prev.O };
@@ -476,13 +380,15 @@ export default function Game(){
         };
       });
     }
-  }, [winnerPopup, currentMove, currentSquares]);
+  }, [winnerPopup, currentMove, moveStartTime, currentSquares]);
 
-  // TIMER EFFECT
+  // 🟦 TIMER EFFECT
   useEffect(() => {
+    // Don't start timer if it's AI's turn in AI mode
     if (gameMode === 'ai') {
       const currentPlayer = xIsNext ? 'X' : 'O';
       if (currentPlayer === aiPlayer) {
+        // It's AI's turn, don't start timer
         if (timerRef.current) {
           clearInterval(timerRef.current);
         }
@@ -490,19 +396,22 @@ export default function Game(){
       }
     }
     
-    if (!isTimerActive || CalculateWinner(currentSquares) || !currentSquares.includes(null)) {
+    if (!isTimerActive || Calculatewinner(currentSquares) || !currentSquares.includes(null)) {
       return;
     }
 
+    // Clear any existing timer
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
 
+    // Set new timer
     timerRef.current = setInterval(() => {
       setTimeLeft(prevTime => {
         if (prevTime <= 1) {
           clearInterval(timerRef.current);
           
+          // Auto-make a move when time runs out
           const emptySquares = currentSquares
             .map((square, index) => square === null ? index : null)
             .filter(val => val !== null);
@@ -514,17 +423,19 @@ export default function Game(){
             const nextSquares = currentSquares.slice();
             nextSquares[randomMove] = xIsNext ? "X" : "O";
             
+            // Use a small delay to avoid state issues
             setTimeout(() => {
               handlePlay(nextSquares);
             }, 100);
           }
           
-          return 30;
+          return 30; // Reset timer
         }
         return prevTime - 1;
       });
     }, 1000);
 
+    // Cleanup function
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -532,12 +443,13 @@ export default function Game(){
     };
   }, [currentSquares, isTimerActive, xIsNext, gameMode, aiPlayer]);
 
+  // 🟦 Reset timer when move changes
   useEffect(() => {
     setTimeLeft(30);
   }, [currentMove]);
 
   function handlePlay(nextSquares) {
-    if (CalculateWinner(currentSquares)) {
+    if (Calculatewinner(currentSquares)) {
       setIsTimerActive(false);
       return;
     }
@@ -550,7 +462,7 @@ export default function Game(){
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
 
-    const winner = CalculateWinner(nextSquares);
+    const winner = Calculatewinner(nextSquares);
     if (winner) {
       setWinnerPopup(winner);
       setIsTimerActive(false);
@@ -575,8 +487,9 @@ export default function Game(){
     setIsAiThinking(false);
   }
 
+  // 🟦 RESTART FUNCTION - Reset timer too
   const handleRestart = () => {
-    setHistory([Array(25).fill(null)]);
+    setHistory([Array(9).fill(null)]);
     setCurrentMove(0);
     setWinnerPopup(null);
     setTimeLeft(30);
@@ -602,9 +515,10 @@ export default function Game(){
     <div className={`game-container ${theme}`}>
       <header className={`game-header ${theme}`}>
         <h1 className="game-title">🎮 Tic Tac Toe Champions</h1>
-        <div className="header-subtitle">5x5 Edition - Modern Twist</div>
+        <div className="header-subtitle">Classic Game with Modern Twist</div>
       </header>
 
+      {/* 🆕 AI THINKING INDICATOR */}
       {isAiThinking && (
         <div className="ai-thinking-indicator">
           <div className="ai-thinking-content">
@@ -620,15 +534,11 @@ export default function Game(){
       )}
 
       <div className="game-content">
-        {/* LEFT SIDEBAR - Collapsible Panels */}
+        {/* LEFT SIDEBAR - Game Controls & Info */}
         <div className="sidebar left-sidebar">
-          <SidebarPanel 
-            title="🎮 Game Mode" 
-            icon="🎮"
-            isOpen={openPanels.gameMode}
-            onToggle={() => togglePanel('gameMode')}
-            theme={theme}
-          >
+          {/* 🆕 GAME MODE SELECTOR */}
+          <div className={`control-section game-mode-section ${theme}`}>
+            <h3 className="section-title">🎮 Game Mode</h3>
             <div className="game-mode-selector">
               <div 
                 className={`mode-option ${gameMode === 'pvp' ? 'active' : ''} ${theme}`}
@@ -655,6 +565,7 @@ export default function Game(){
               </div>
             </div>
             
+            {/* 🆕 AI SETTINGS (only show in AI mode) */}
             {gameMode === 'ai' && (
               <div className="ai-settings">
                 <div className="setting-group">
@@ -711,49 +622,71 @@ export default function Game(){
                     </div>
                   </div>
                 </div>
+                
+                <div className="ai-info">
+                  <p className="ai-description">
+                    {aiDifficulty === 'easy' && '🤖 AI makes random moves'}
+                    {aiDifficulty === 'medium' && '🤖 AI uses basic strategy'}
+                    {aiDifficulty === 'hard' && '🤖 AI uses advanced strategy (unbeatable)'}
+                  </p>
+                </div>
               </div>
             )}
-          </SidebarPanel>
+          </div>
 
-          <SidebarPanel 
-            title="🎨 Theme" 
-            icon="🎨"
-            isOpen={openPanels.theme}
-            onToggle={() => togglePanel('theme')}
-            theme={theme}
-          >
-            <div className="theme-options">
-              <div 
-                className={`theme-option ${theme === "cyberpunk" ? "active" : ""}`}
-                onClick={() => setTheme("cyberpunk")}
-              >
-                <div className="theme-preview cyberpunk"></div>
-                <span>Cyberpunk</span>
-              </div>
-              <div 
-                className={`theme-option ${theme === "neon" ? "active" : ""}`}
-                onClick={() => setTheme("neon")}
-              >
-                <div className="theme-preview neon"></div>
-                <span>Neon</span>
-              </div>
-              <div 
-                className={`theme-option ${theme === "sunset" ? "active" : ""}`}
-                onClick={() => setTheme("sunset")}
-              >
-                <div className="theme-preview sunset"></div>
-                <span>Sunset</span>
+          {/* Theme Selector */}
+          <div className="control-section theme-section">
+            <h3 className="section-title">🎨 Theme Selector</h3>
+            <div className="theme-selector">
+              <div className="theme-options">
+                <div 
+                  className={`theme-option ${theme === "cyberpunk" ? "active" : ""}`}
+                  onClick={() => setTheme("cyberpunk")}
+                  data-theme="cyberpunk"
+                >
+                  <div className="theme-preview cyberpunk"></div>
+                  <span>Cyberpunk</span>
+                </div>
+                <div 
+                  className={`theme-option ${theme === "neon" ? "active" : ""}`}
+                  onClick={() => setTheme("neon")}
+                  data-theme="neon"
+                >
+                  <div className="theme-preview neon"></div>
+                  <span>Neon</span>
+                </div>
+                <div 
+                  className={`theme-option ${theme === "sunset" ? "active" : ""}`}
+                  onClick={() => setTheme("sunset")}
+                  data-theme="sunset"
+                >
+                  <div className="theme-preview sunset"></div>
+                  <span>Sunset</span>
+                </div>
               </div>
             </div>
-          </SidebarPanel>
+          </div>
 
-          <SidebarPanel 
-            title="👤 Avatars" 
-            icon="👤"
-            isOpen={openPanels.avatars}
-            onToggle={() => togglePanel('avatars')}
-            theme={theme}
-          >
+          {/* Timer Section */}
+          <div className={`control-section timer-section ${theme}`}>
+            <h3 className="section-title">⏱️ Game Timer</h3>
+            <div className="timer-display">
+              <div className={`timer-circle ${timeLeft <= 10 ? 'warning' : ''} ${theme}`}>
+                <span className="timer-value">{timeLeft}s</span>
+                <div className="timer-progress" style={{ width: `${(timeLeft/30)*100}%` }}></div>
+              </div>
+              <button 
+                className={`timer-btn ${theme}`}
+                onClick={() => setIsTimerActive(!isTimerActive)}
+              >
+                {isTimerActive ? "⏸️ Pause" : "▶️ Resume"}
+              </button>
+            </div>
+          </div>
+
+          {/* Avatar Selection */}
+          <div className={`control-section avatar-section ${theme}`}>
+            <h3 className="section-title">👤 Player Avatars</h3>
             <div className="avatar-selection-grid">
               <AvatarSelector 
                 player="X" 
@@ -768,45 +701,24 @@ export default function Game(){
                 theme={theme}
               />
             </div>
-          </SidebarPanel>
+          </div>
 
-          <SidebarPanel 
-            title="📜 History" 
-            icon="📜"
-            isOpen={openPanels.history}
-            onToggle={() => togglePanel('history')}
-            theme={theme}
-          >
+          {/* Game History */}
+          <div className={`control-section history-section ${theme}`}>
+            <h3 className="section-title">📜 Game History</h3>
             <div className="history-list">
               <ol>{moves}</ol>
             </div>
-          </SidebarPanel>
+          </div>
         </div>
 
-        {/* MAIN GAME AREA - Always Visible */}
+        {/* MAIN GAME BOARD */}
         <div className="main-game-area">
           <div className="game-board-wrapper">
-            {/* Timer Display - Always Visible */}
-            <div className={`timer-display-main ${theme}`}>
-              <div className="timer-header">
-                <h3>⏱️ Timer</h3>
-                <button 
-                  className={`timer-btn ${theme}`}
-                  onClick={() => setIsTimerActive(!isTimerActive)}
-                >
-                  {isTimerActive ? "⏸️ Pause" : "▶️ Resume"}
-                </button>
-              </div>
-              <div className={`timer-circle-main ${timeLeft <= 10 ? 'warning' : ''} ${theme}`}>
-                <span className="timer-value">{timeLeft}s</span>
-                <div className="timer-progress" style={{ width: `${(timeLeft/30)*100}%` }}></div>
-              </div>
-            </div>
-
-            {/* Game Board */}
-            <div className={`game-board ${CalculateWinner(currentSquares) ? "winner" : ""} ${theme}`}>
-              {gameMode === 'ai' && (
-                <div className={`ai-indicator ${theme}`}>
+            <div className={`game-board ${Calculatewinner(currentSquares) ? "winner" : ""} ${theme}`}>
+              {/* 🆕 Display who is AI in the status */}
+              <div className={`ai-indicator ${theme}`}>
+                {gameMode === 'ai' && (
                   <div className="ai-labels">
                     <div className={`ai-label ${aiPlayer === 'X' ? 'ai' : 'human'}`}>
                       {aiPlayer === 'X' ? '🤖 AI' : '👤 Human'}
@@ -816,8 +728,8 @@ export default function Game(){
                       {aiPlayer === 'O' ? '🤖 AI' : '👤 Human'}
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
               
               <Board 
                 xIsNext={xIsNext}
@@ -827,25 +739,14 @@ export default function Game(){
                 theme={theme}
               />
             </div>
-
-            {/* Restart Button - Always Visible */}
-            <div className="action-buttons">
-              <button className={`restart-btn-main ${theme}`} onClick={handleRestart}>
-                🔄 Restart Game
-              </button>
-            </div>
           </div>
         </div>
 
-        {/* RIGHT SIDEBAR - Collapsible Panels */}
+        {/* RIGHT SIDEBAR - Stats & Score */}
         <div className="sidebar right-sidebar">
-          <SidebarPanel 
-            title="🏆 Scoreboard" 
-            icon="🏆"
-            isOpen={openPanels.scoreboard}
-            onToggle={() => togglePanel('scoreboard')}
-            theme={theme}
-          >
+          {/* Scoreboard */}
+          <div className={`control-section scoreboard-section ${theme}`}>
+            <h3 className="section-title">🏆 Live Scoreboard</h3>
             <div className="scoreboard-cards">
               <div className={`score-card player-x-score ${theme}`}>
                 <div className="score-avatar">
@@ -878,19 +779,18 @@ export default function Game(){
                 </div>
               </div>
             </div>
-          </SidebarPanel>
+          </div>
 
-          <SidebarPanel 
-            title="📊 Statistics" 
-            icon="📊"
-            isOpen={openPanels.stats}
-            onToggle={() => togglePanel('stats')}
-            theme={theme}
-          >
+          {/* Player Statistics */}
+          <div className={`control-section stats-section ${theme}`}>
+            <h3 className="section-title">📊 Player Statistics</h3>
+            
+            {/* Tab Selection */}
             <div className="player-tabs">
               <div 
                 className={`player-tab ${activeStatsTab === "X" ? "active" : ""} ${theme}`}
                 onClick={() => setActiveStatsTab("X")}
+                data-player="X"
               >
                 <img src={avatars.X} alt="Player X" className="tab-avatar" />
                 <span>Player X</span>
@@ -898,6 +798,7 @@ export default function Game(){
               <div 
                 className={`player-tab ${activeStatsTab === "O" ? "active" : ""} ${theme}`}
                 onClick={() => setActiveStatsTab("O")}
+                data-player="O"
               >
                 <img src={avatars.O} alt="Player O" className="tab-avatar" />
                 <span>Player O</span>
@@ -905,7 +806,7 @@ export default function Game(){
             </div>
             
             {/* X Player Stats */}
-            <div className={`player-stats ${activeStatsTab === "X" ? "active" : ""} ${theme}`}>
+            <div className={`player-stats ${activeStatsTab === "X" ? "active" : ""} ${theme}`} id="stats-X">
               <div className="stats-grid">
                 <div className={`stat-box ${theme}`}>
                   <div className={`stat-icon ${theme}`}>🎯</div>
@@ -954,7 +855,7 @@ export default function Game(){
             </div>
             
             {/* O Player Stats */}
-            <div className={`player-stats ${activeStatsTab === "O" ? "active" : ""} ${theme}`}>
+            <div className={`player-stats ${activeStatsTab === "O" ? "active" : ""} ${theme}`} id="stats-O">
               <div className="stats-grid">
                 <div className={`stat-box ${theme}`}>
                   <div className={`stat-icon ${theme}`}>🎯</div>
@@ -1001,7 +902,7 @@ export default function Game(){
                 </div>
               </div>
             </div>
-          </SidebarPanel>
+          </div>
         </div>
       </div>
 
@@ -1038,6 +939,27 @@ function GameOverPopup({ winner, onRestart, theme, gameMode, aiDifficulty }) {
       </div>
     </div>
   );
+}
+
+function Calculatewinner(squares, returnLine = false){
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  for (let line of lines) {
+    const [a,b,c] = line;
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return returnLine ? line : squares[a];
+    }
+  }
+  return returnLine ? null : null;
 }
 
 function AvatarSelector({ player, currentAvatar, onAvatarChange, theme }) {

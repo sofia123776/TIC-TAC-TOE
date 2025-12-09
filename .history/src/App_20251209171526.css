@@ -1,0 +1,363 @@
+/* App.css - Add these styles */
+
+/* 5x5 Board Layout */
+.board-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 500px;
+  height: 500px;
+}
+
+.board-row {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.square {
+  flex: 1;
+  aspect-ratio: 1;
+  border: 2px solid #666;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.square.highlight {
+  animation: pulse 1s infinite;
+  background-color: rgba(255, 255, 0, 0.3);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Sidebar Panels */
+.sidebar-panel {
+  background: var(--panel-bg, #2a2a2a);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.panel-header {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background: var(--panel-header-bg, #3a3a3a);
+  border-bottom: 2px solid var(--panel-border, #4a4a4a);
+}
+
+.panel-header:hover {
+  background: var(--panel-header-hover, #4a4a4a);
+}
+
+.panel-icon {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.panel-title {
+  flex: 1;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.panel-toggle {
+  font-size: 12px;
+}
+
+.panel-content {
+  padding: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Timer Display (Main) */
+.timer-display-main {
+  background: var(--panel-bg, #2a2a2a);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.timer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.timer-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.timer-btn {
+  background: var(--btn-bg, #4a4a4a);
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.timer-btn:hover {
+  background: var(--btn-hover, #5a5a5a);
+  transform: translateY(-2px);
+}
+
+.timer-circle-main {
+  width: 100%;
+  height: 40px;
+  background: var(--timer-bg, #1a1a1a);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.timer-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 2;
+}
+
+.timer-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--timer-progress, #4CAF50);
+  transition: width 1s linear;
+}
+
+.timer-circle-main.warning {
+  background: var(--timer-warning-bg, #552222);
+}
+
+.timer-circle-main.warning .timer-progress {
+  background: var(--timer-warning-progress, #ff4444);
+}
+
+/* Action Buttons */
+.action-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.restart-btn-main {
+  background: var(--btn-bg, #4a4a4a);
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.restart-btn-main:hover {
+  background: var(--btn-hover, #5a5a5a);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Layout */
+.game-container {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.game-content {
+  display: flex;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.sidebar {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.main-game-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-board-wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Theme Variables */
+.game-container.cyberpunk {
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  --panel-bg: rgba(0, 0, 0, 0.7);
+  --panel-header-bg: rgba(255, 0, 255, 0.2);
+  --btn-bg: rgba(0, 255, 255, 0.3);
+  --timer-progress: #00ffff;
+  --timer-warning-progress: #ff00ff;
+}
+
+.game-container.neon {
+  background: linear-gradient(135deg, #000000, #1a1a2e);
+  --panel-bg: rgba(255, 20, 147, 0.1);
+  --panel-header-bg: rgba(0, 255, 255, 0.2);
+  --btn-bg: rgba(255, 20, 147, 0.3);
+  --timer-progress: #00ffff;
+  --timer-warning-progress: #ff1493;
+}
+
+.game-container.sunset {
+  background: linear-gradient(135deg, #ff6b6b, #556270);
+  --panel-bg: rgba(255, 107, 107, 0.1);
+  --panel-header-bg: rgba(85, 98, 112, 0.3);
+  --btn-bg: rgba(255, 159, 67, 0.3);
+  --timer-progress: #ff9f43;
+  --timer-warning-progress: #ee5a24;
+}
+
+/* Avatar Selector */
+.avatar-selector-compact {
+  margin-bottom: 20px;
+}
+
+.current-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 10px auto;
+  border: 3px solid var(--btn-bg, #4a4a4a);
+}
+
+.current-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-options-compact {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.avatar-option-compact {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.avatar-option-compact:hover {
+  transform: scale(1.1);
+}
+
+.avatar-option-compact.selected {
+  border-color: var(--timer-progress, #4CAF50);
+  box-shadow: 0 0 10px var(--timer-progress, #4CAF50);
+}
+
+.avatar-option-compact img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* AI Thinking Indicator */
+.ai-thinking-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.ai-thinking-content {
+  background: var(--panel-bg, #2a2a2a);
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.thinking-dots {
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+
+.thinking-dots .dot {
+  animation: blink 1.5s infinite;
+}
+
+.thinking-dots .dot:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dots .dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .game-content {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .sidebar-panel {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .game-board-wrapper {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .board-grid {
+    width: 100%;
+    height: auto;
+  }
+  
+  .square {
+    font-size: 18px;
+  }
+  
+  .game-header {
+    text-align: center;
+  }
+}

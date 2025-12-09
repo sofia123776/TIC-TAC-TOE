@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    
+    <!-- ========== CRITICAL MOBILE META TAGS ========== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    
+    <!-- ========== PWA / APP INSTALLATION ========== -->
+    <meta name="theme-color" content="#16213e" />
+    <meta name="description" content="Tic Tac Toe Champions - Play classic Tic Tac Toe with AI opponents, multiple themes, and modern features" />
+    <meta name="keywords" content="tic tac toe, game, AI, multiplayer, react, game" />
+    <meta name="author" content="Tic Tac Toe Champions" />
+    
+    <!-- ========== APPLE SPECIFIC ========== -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="TicTacToe" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    
+    <!-- ========== MICROSOFT/EDGE ========== -->
+    <meta name="msapplication-TileColor" content="#16213e" />
+    <meta name="msapplication-TileImage" content="/logo192.png" />
+    <meta name="msapplication-config" content="none" />
+    
+    <!-- ========== PWA MANIFEST ========== -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- ========== FAVICONS ========== -->
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <!-- ========== SITE IDENTITY ========== -->
+    <link rel="canonical" href="/" />
+    <title>Tic Tac Toe Champions</title>
+    
+    <!-- ========== PRELOAD/PERFORMANCE ========== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- ========== TWITTER CARD ========== -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Tic Tac Toe Champions" />
+    <meta name="twitter:description" content="Classic Tic Tac Toe with AI opponents and modern themes" />
+    <meta name="twitter:image" content="/logo512.png" />
+    
+    <!-- ========== OPEN GRAPH ========== -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Tic Tac Toe Champions" />
+    <meta property="og:description" content="Classic Tic Tac Toe with AI opponents and modern themes" />
+    <meta property="og:image" content="/logo512.png" />
+    <meta property="og:url" content="/" />
+    <meta property="og:site_name" content="Tic Tac Toe Champions" />
+    
+    <!-- ========== SECURITY HEADERS ========== -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self';" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  </head>
+  <body>
+    <!-- ========== LOADING FALLBACK ========== -->
+    <div id="loading" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: white;
+      z-index: 9999;
+    ">
+      <div style="
+        width: 60px;
+        height: 60px;
+        border: 5px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      "></div>
+      <h2 style="margin: 0; font-family: 'Segoe UI', sans-serif;">Loading Tic Tac Toe...</h2>
+      <style>
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      </style>
+    </div>
+    
+    <!-- ========== ROOT CONTAINER ========== -->
+    <noscript>
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+      ">
+        <div>
+          <h1>JavaScript Required</h1>
+          <p>This game requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+        </div>
+      </div>
+    </noscript>
+    
+    <div id="root"></div>
+    
+    <!-- ========== SCRIPT TO HIDE LOADER ========== -->
+    <script>
+      // Hide loading screen when app is ready
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const loading = document.getElementById('loading');
+          if (loading) {
+            loading.style.opacity = '0';
+            loading.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => loading.style.display = 'none', 500);
+          }
+        }, 500);
+      });
+      
+      // Prevent zoom on double tap (mobile)
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function(event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, false);
+      
+      // Prevent zoom on input focus (iOS)
+      document.addEventListener('touchstart', function(event) {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+          event.target.style.fontSize = '16px';
+        }
+      });
+    </script>
+  </body>
+</html>
