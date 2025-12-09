@@ -635,7 +635,7 @@ export default function Game(){
     <div className={`game-container ${theme}`}>
       <header className={`game-header ${theme}`}>
         <h1 className="game-title">🎮 Tic Tac Toe Champions</h1>
-        <div className="header-subtitle">Classic Edition - Modern Twist</div>
+        <div className="header-subtitle">5x5 Edition - Modern Twist</div>
         {isMobile && (
           <div className="mobile-controls-hint">
             <small>Tap sidebars to expand controls</small>
